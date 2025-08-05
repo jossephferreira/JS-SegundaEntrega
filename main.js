@@ -1,7 +1,5 @@
 // Simulador de turnos médicos
 
-const turnosAsignados = [];
-
 const especialidades = [
   {
     nombre: "Clínica General",
@@ -20,57 +18,93 @@ const especialidades = [
   }
 ];
 
-// Función para mostrar especialidades
-function mostrarEspecialidades() {
-  let mensaje = "Especialidades disponibles:\n";
-  for (let i = 0; i < especialidades.length; i++) {
-    mensaje += `${i + 1} - ${especialidades[i].nombre}\n`;
-  }
-  return mensaje;
-}
+let turnosAsignados = JSON.parse(localStorage.getItem("turnos")) || [];
 
-// Validación de nombre
-function solicitarNombre() {
-  let nombre;
-  do {
-    nombre = prompt("Ingrese su nombre:");
-    if (!nombre || nombre.trim() === "") {
-      alert("El nombre es obligatorio");
-    }
-  } while (!nombre || nombre.trim() === "");
-  return nombre.trim();
-}
+const form = document.getElementById("form-turno");
+const lista = document.getElementById("lista-turnos");
+const inputBusqueda = document.getElementById("busqueda");
 
-// Función principal
-function simularTurno() {
-  alert("Bienvenidos al sistema de turnos médicos");
 
-  const nombrePaciente = solicitarNombre();
+// ✅ Evento: formulario
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-  const opcion = parseInt(prompt(mostrarEspecialidades()));
+  const nombre = document.getElementById("nombre").value.trim();
+  const especialidadIndex = parseInt(document.getElementById("especialidad").value);
 
-  if (isNaN(opcion) || opcion < 1 || opcion > especialidades.length) {
-    alert("Opción inválida");
+  if (nombre === "") {
+    alert("Por favor ingrese su nombre.");
     return;
   }
 
-  const especialidadElegida = especialidades[opcion - 1];
-  const medico = especialidadElegida.medicos[Math.floor(Math.random() * especialidadElegida.medicos.length)];
-  const turno = especialidadElegida.turnos[Math.floor(Math.random() * especialidadElegida.turnos.length)];
+  const especialidad = especialidades[especialidadIndex];
+  const medico = especialidad.medicos[Math.floor(Math.random() * especialidad.medicos.length)];
+  const horario = especialidad.turnos[Math.floor(Math.random() * especialidad.turnos.length)];
 
   const nuevoTurno = {
-    paciente: nombrePaciente,
-    especialidad: especialidadElegida.nombre,
-    medico: medico,
-    horario: turno
+    id: Date.now(), // identificador único
+    paciente: nombre,
+    especialidad: especialidad.nombre,
+    medico,
+    horario
   };
 
   turnosAsignados.push(nuevoTurno);
+  guardarTurnos();
+  form.reset();
+  alert("Turno asignado correctamente.");
+});
 
-  alert(`Turno asignado a ${nombrePaciente}:\nEspecialidad: ${especialidadElegida.nombre}\nMédico: ${medico}\nHorario: ${turno}`);
+// Evento: búsqueda
+inputBusqueda.addEventListener("input", () => {
+  const texto = inputBusqueda.value.toLowerCase();
+  if (texto === "") {
+    lista.innerHTML = ""; // limpiar resultados si no se busca
+    return;
+  }
 
-  console.log("=== Turnos Asignados ===");
-  turnosAsignados.forEach((t, i) => {
-    console.log(`${i + 1}. ${t.paciente} - ${t.especialidad} con ${t.medico} el ${t.horario}`);
+  const filtrados = turnosAsignados.filter(t =>
+    t.paciente.toLowerCase().includes(texto)
+  );
+
+  mostrarTurnos(filtrados);
+});
+
+// Mostrar turnos filtrados
+function mostrarTurnos(listaTurnos) {
+  lista.innerHTML = "";
+
+  if (listaTurnos.length === 0) {
+    lista.innerHTML = "<li>No hay turnos para ese nombre.</li>";
+    return;
+  }
+
+  listaTurnos.forEach(turno => {
+    const li = document.createElement("li");
+    li.textContent = `${turno.paciente} - ${turno.especialidad} con ${turno.medico} el ${turno.horario}`;
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.textContent = "Eliminar";
+    btnEliminar.addEventListener("click", () => eliminarTurno(turno.id));
+
+    li.appendChild(btnEliminar);
+    lista.appendChild(li);
   });
+}
+
+// Eliminar turno por ID
+function eliminarTurno(id) {
+  turnosAsignados = turnosAsignados.filter(t => t.id !== id);
+  guardarTurnos();
+
+  const texto = inputBusqueda.value.toLowerCase();
+  const filtrados = turnosAsignados.filter(t =>
+    t.paciente.toLowerCase().includes(texto)
+  );
+  mostrarTurnos(filtrados);
+}
+
+//  Guardar en localStorage
+function guardarTurnos() {
+  localStorage.setItem("turnos", JSON.stringify(turnosAsignados));
 }

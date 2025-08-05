@@ -3,12 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <title>Simulador de Turnos Médicos</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 
   <h1>Turnos Médicos</h1>
-  <button onclick="simularTurno()">Solicitar Turno</button>
+
+  <form id="form-turno">
+    <label for="nombre">Nombre del paciente:</label>
+    <input type="text" id="nombre" required />
+
+    <label for="especialidad">Especialidad:</label>
+    <select id="especialidad">
+      <option value="0">Clínica General</option>
+      <option value="1">Pediatría</option>
+      <option value="2">Dermatología</option>
+    </select>
+
+    <button type="submit">Solicitar turno</button>
+  </form>
+
+
+  <h2>Turnos asignados</h2>
+
+<label for="busqueda">Buscar por nombre:</label>
+<input type="text" id="busqueda" placeholder="Ej: Juan Pérez">
+
+<ul id="lista-turnos"></ul>
 
 
 
