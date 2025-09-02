@@ -23,7 +23,7 @@ Se utilizó **DOM, Eventos y JSON** para manejar dinámicamente la interfaz.
 ## 🚀 Demo
 
 ![Vista previa] Enlace
-
+https://jossephferreira.github.io/JS-SegundaEntrega/
 
 
 
