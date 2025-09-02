@@ -1,38 +1,160 @@
-body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f2f2f2;
+/* ==== Estilos generales ==== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-form {
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  max-width: 400px;
+body {
+  background: #f3f6fb;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ==== Header ==== */
+header {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  border-bottom: 4px solid #0056b3;
+}
+
+header h1 {
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+/* ==== Secciones ==== */
+main {
+  width: 90%;
+  max-width: 900px;
+  margin: 2rem auto;
+  display: grid;
+  gap: 2rem;
+}
+
+/* ==== Formulario ==== */
+.formulario, .busqueda, .lista {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.formulario h2, .busqueda h2, .lista h2 {
+  margin-bottom: 1rem;
+  color: #007bff;
+}
+
+.campo {
+  margin-bottom: 1rem;
 }
 
 label {
   display: block;
-  margin-top: 10px;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #444;
 }
 
-input, select, button {
+input, select {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+input:focus, select:focus {
+  border: 1px solid #007bff;
+  box-shadow: 0 0 6px rgba(0,123,255,0.3);
 }
 
 button {
-  margin-top: 10px;
+  background: #007bff;
+  color: white;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
 }
 
-li button {
-  margin-left: 10px;
-  background-color: crimson;
+button:hover {
+  background: #0056b3;
+}
+
+/* ==== Busqueda ==== */
+.busqueda input {
+  border: 2px solid #007bff;
+}
+
+/* ==== Lista ==== */
+#lista-turnos {
+  list-style: none;
+  margin-top: 1rem;
+}
+
+#lista-turnos li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eef4ff;
+  border: 1px solid #cce0ff;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: transform 0.2s;
+}
+
+#lista-turnos li:hover {
+  transform: scale(1.02);
+}
+
+#lista-turnos .info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+#lista-turnos strong {
+  font-size: 1.1rem;
+  color: #222;
+}
+
+#lista-turnos span {
+  font-size: 0.9rem;
+  color: #555;
+}
+#lista-turnos button {
+  background: #dc3545;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+#lista-turnos button:hover {
+  background: #a71d2a;
+}
+
+.placeholder {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+  background: #fafafa;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+/* ==== Footer ==== */
+footer {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  background: #007bff;
   color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
+  border-top: 3px solid #0056b3;
 }

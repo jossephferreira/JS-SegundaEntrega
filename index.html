@@ -2,40 +2,50 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Simulador de Turnos Médicos</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+  <header>
+    <h1>🩺 Simulador de Turnos Médicos</h1>
+  </header>
 
+  <main>
+    <!-- Formulario -->
+    <section class="formulario">
+      <h2>Asignar nuevo turno</h2>
+      <form id="form-turno">
+        <div class="campo">
+          <label for="nombre">Nombre del paciente</label>
+          <input type="text" id="nombre" value="Juan Pérez" required>
+        </div>
+        <div class="campo">
+          <label for="especialidad">Especialidad</label>
+          <select id="especialidad" required></select>
+        </div>
+        <button type="submit">➕ Asignar Turno</button>
+      </form>
+    </section>
 
-  <h1>Turnos Médicos</h1>
+    <!-- Búsqueda -->
+    <section class="busqueda">
+      <h2>Buscar turnos asignados</h2>
+      <input type="text" id="busqueda" placeholder="🔎 Ingresar nombre del paciente...">
+    </section>
 
-  <form id="form-turno">
-    <label for="nombre">Nombre del paciente:</label>
-    <input type="text" id="nombre" required />
+    <!-- Lista de turnos -->
+    <section class="lista">
+      <h2>Resultados</h2>
+      <ul id="lista-turnos"></ul>
+    </section>
+  </main>
 
-    <label for="especialidad">Especialidad:</label>
-    <select id="especialidad">
-      <option value="0">Clínica General</option>
-      <option value="1">Pediatría</option>
-      <option value="2">Dermatología</option>
-    </select>
+  <footer>
+    <p>© 2025 Simulador de Turnos Médicos</p>
+  </footer>
 
-    <button type="submit">Solicitar turno</button>
-  </form>
-
-
-  <h2>Turnos asignados</h2>
-
-<label for="busqueda">Buscar por nombre:</label>
-<input type="text" id="busqueda" placeholder="Ej: Juan Pérez">
-
-<ul id="lista-turnos"></ul>
-
-
-
-
-
-    <script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

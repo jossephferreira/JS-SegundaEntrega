@@ -1,110 +1,132 @@
-// Simulador de turnos médicos
-
-const especialidades = [
-  {
-    nombre: "Clínica General",
-    medicos: ["Dra. Gonzalez", "Dr. Pírez"],
-    turnos: ["Lunes 10:00", "Miércoles 14:00"]
-  },
-  {
-    nombre: "Pediatría",
-    medicos: ["Dra. Ferreira", "Dr. Medina"],
-    turnos: ["Martes 09:00", "Jueves 15:00"]
-  },
-  {
-    nombre: "Dermatología",
-    medicos: ["Dra. Lopez", "Dr. Ramirez"],
-    turnos: ["Viernes 11:00", "Sábado 10:00"]
-  }
-];
-
-let turnosAsignados = JSON.parse(localStorage.getItem("turnos")) || [];
-
 const form = document.getElementById("form-turno");
-const lista = document.getElementById("lista-turnos");
-const inputBusqueda = document.getElementById("busqueda");
+const listaTurnos = document.getElementById("lista-turnos");
+const busqueda = document.getElementById("busqueda");
+const selectEspecialidad = document.getElementById("especialidad");
 
+let especialidadesData = [];
 
-// ✅ Evento: formulario
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
+// Guardar y cargar desde localStorage
+const getTurnos = () => JSON.parse(localStorage.getItem("turnos")) || [];
+const saveTurnos = (turnos) => localStorage.setItem("turnos", JSON.stringify(turnos));
 
-  const nombre = document.getElementById("nombre").value.trim();
-  const especialidadIndex = parseInt(document.getElementById("especialidad").value);
+//Cargar especialidades desde JSON 
+async function cargarEspecialidades() {
+  try {
+    const response = await fetch("especialidades.json");
+    especialidadesData = await response.json();
 
-  if (nombre === "") {
-    alert("Por favor ingrese su nombre.");
-    return;
+    selectEspecialidad.innerHTML = "<option value=''>Seleccione una especialidad</option>";
+
+    especialidadesData.forEach(esp => {
+      const option = document.createElement("option");
+      option.value = esp.id;
+      option.textContent = esp.nombre;
+      selectEspecialidad.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error cargando especialidades:", error);
+    Swal.fire("Error", "No se pudieron cargar las especialidades", "error");
   }
+}
+cargarEspecialidades();
 
-  const especialidad = especialidades[especialidadIndex];
-  const medico = especialidad.medicos[Math.floor(Math.random() * especialidad.medicos.length)];
-  const horario = especialidad.turnos[Math.floor(Math.random() * especialidad.turnos.length)];
+// Renderizar turnos
+function renderTurnos(filtro = "") {
+  listaTurnos.innerHTML = "";
 
-  const nuevoTurno = {
-    id: Date.now(), // identificador único
-    paciente: nombre,
-    especialidad: especialidad.nombre,
-    medico,
-    horario
-  };
-
-  turnosAsignados.push(nuevoTurno);
-  guardarTurnos();
-  form.reset();
-  alert("Turno asignado correctamente.");
-});
-
-// Evento: búsqueda
-inputBusqueda.addEventListener("input", () => {
-  const texto = inputBusqueda.value.toLowerCase();
-  if (texto === "") {
-    lista.innerHTML = ""; // limpiar resultados si no se busca
-    return;
-  }
-
-  const filtrados = turnosAsignados.filter(t =>
-    t.paciente.toLowerCase().includes(texto)
+  const turnos = getTurnos();
+  const filtrados = turnos.filter(t => 
+    t.nombre.toLowerCase().includes(filtro.toLowerCase())
   );
 
-  mostrarTurnos(filtrados);
-});
-
-// Mostrar turnos filtrados
-function mostrarTurnos(listaTurnos) {
-  lista.innerHTML = "";
-
-  if (listaTurnos.length === 0) {
-    lista.innerHTML = "<li>No hay turnos para ese nombre.</li>";
+  if (filtrados.length === 0) {
+    listaTurnos.innerHTML = `<li class="placeholder">🔎 No se encontraron turnos</li>`;
     return;
   }
 
-  listaTurnos.forEach(turno => {
+  filtrados.forEach((turno, index) => {
     const li = document.createElement("li");
-    li.textContent = `${turno.paciente} - ${turno.especialidad} con ${turno.medico} el ${turno.horario}`;
+
+    const info = document.createElement("div");
+    info.classList.add("info");
+    info.innerHTML = `
+      <strong>${turno.nombre}</strong>
+      <span>Especialidad: ${turno.especialidad}</span>
+      <span>Médico: ${turno.medico}</span>
+      <span>Horario: ${turno.horario}</span>
+    `;
 
     const btnEliminar = document.createElement("button");
     btnEliminar.textContent = "Eliminar";
-    btnEliminar.addEventListener("click", () => eliminarTurno(turno.id));
+    btnEliminar.addEventListener("click", () => eliminarTurno(index));
 
+    li.appendChild(info);
     li.appendChild(btnEliminar);
-    lista.appendChild(li);
+    listaTurnos.appendChild(li);
   });
 }
 
-// Eliminar turno por ID
-function eliminarTurno(id) {
-  turnosAsignados = turnosAsignados.filter(t => t.id !== id);
-  guardarTurnos();
+//Agregar turno
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
 
-  const texto = inputBusqueda.value.toLowerCase();
-  const filtrados = turnosAsignados.filter(t =>
-    t.paciente.toLowerCase().includes(texto)
-  );
-  mostrarTurnos(filtrados);
-}
+  const nombre = document.getElementById("nombre").value.trim();
+  const especialidadId = parseInt(selectEspecialidad.value);
 
-//  Guardar en localStorage
-function guardarTurnos() {
-  localStorage.setItem("turnos", JSON.stringify(turnosAsignados));
+  if (!nombre || !especialidadId) {
+    Swal.fire("Error", "Debes completar todos los campos", "error");
+    return;
+  }
+
+  const especialidadElegida = especialidadesData.find(esp => esp.id === especialidadId);
+
+  const medicoAleatorio = especialidadElegida.medicos[Math.floor(Math.random() * especialidadElegida.medicos.length)];
+  const turnoAleatorio = especialidadElegida.turnos[Math.floor(Math.random() * especialidadElegida.turnos.length)];
+
+  let turnos = getTurnos();
+
+  if (turnos.some(t => 
+      t.nombre.toLowerCase() === nombre.toLowerCase() && 
+      t.especialidad === especialidadElegida.nombre)) {
+    Swal.fire("Atención", "Este paciente ya tiene un turno en esa especialidad", "warning");
+    return;
+  }
+
+  turnos.push({ 
+    nombre, 
+    especialidad: especialidadElegida.nombre, 
+    medico: medicoAleatorio, 
+    horario: turnoAleatorio 
+  });
+  saveTurnos(turnos);
+
+  Swal.fire("Éxito", `Turno asignado con ${medicoAleatorio} el ${turnoAleatorio}`, "success");
+
+  form.reset();
+  document.getElementById("nombre").value = "Juan Pérez";
+});
+
+// Buscar turnos
+busqueda.addEventListener("input", (e) => {
+  renderTurnos(e.target.value);
+});
+
+// Eliminar turno
+function eliminarTurno(index) {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "El turno será eliminado",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let turnos = getTurnos();
+      turnos.splice(index, 1);
+      saveTurnos(turnos);
+      renderTurnos(busqueda.value);
+      Swal.fire("Eliminado", "El turno fue eliminado", "success");
+    }
+  });
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Clínica General",
+    "medicos": ["Dra. González", "Dr. Pírez"],
+    "turnos": ["Lunes 10:00", "Miércoles 14:00", "Viernes 09:00"]
+  },
+  {
+    "id": 2,
+    "nombre": "Pediatría",
+    "medicos": ["Dra. Ferreira", "Dr. Medina"],
+    "turnos": ["Martes 09:00", "Jueves 15:00", "Sábado 11:00"]
+  },
+  {
+    "id": 3,
+    "nombre": "Dermatología",
+    "medicos": ["Dra. López", "Dr. Ramírez"],
+    "turnos": ["Viernes 11:00", "Sábado 10:00", "Lunes 16:00"]
+  },
+  {
+    "id": 4,
+    "nombre": "Cardiología",
+    "medicos": ["Dra. Silva", "Dr. Ríos"],
+    "turnos": ["Martes 11:00", "Jueves 17:00", "Viernes 08:30"]
+  }
+]
